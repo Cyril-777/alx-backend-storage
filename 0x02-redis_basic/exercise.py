@@ -75,9 +75,15 @@ class Cache:
         outputs = r.lrange(f"{fn_name}:outputs", 0, -1)
 
         for inp, outp in zip(inputs, outputs):
-            inp_str = inp.decode('utf-8', errors='ignore')
-            outp_str = outp.decode('utf-8', errors='ignore')
-            print(f'{fn_name}(*{inp_str}) -> {outp_str}')
+            try:
+                inp = inp.decode('utf-8')
+            except Exception:
+                inp = ''
+            try:
+                outp = outp.decode('utf-8')
+            except Exception:
+                outp = ''
+            print('{}(*{}) -> {}'.format(f_n, inp, outp))
 
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
