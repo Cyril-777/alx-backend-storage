@@ -26,7 +26,7 @@ def url_access_count(method: Callable) -> Callable:
             return cached_value.decode("utf-8")
 
         key_count = f"count:{url}"
-        html_content = method(self, url)
+        html_content = method(url)
 
         r.incr(key_count)
         r.set(key, html_content, ex=10)
@@ -37,7 +37,7 @@ def url_access_count(method: Callable) -> Callable:
 
 
 @url_access_count
-def get_page(self, url: str) -> str:
+def get_page(url: str) -> str:
     """
     Obtain the HTML content, track the number of accesses,
     and cache the result with a 10-second expiration.
