@@ -14,6 +14,20 @@ from typing import Union, Callable, Optional
 import redis
 from uuid import uuid4
 
+def replay(method: Callable):
+    """
+    Display the history of calls of a particular function.
+    """
+    function_name = method.__qualname__
+    input_key = "{}:inputs".format(function_name)
+    output_key = "{}:outputs".format(function_name)
+
+    inputs = cache._redis.lrange(input_key, 0, -1)
+    outputs = cache._redis.lrange(output_key, 0, -1)
+    print("{} was called {} times:".format(function_name, len(inputs)))
+    for inp, outp in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(function_name, inp.decode('utf-8'),
+                                     outp.decode('utf-8')))
 
 class Cache:
     """
@@ -59,31 +73,6 @@ class Cache:
             return output
 
         return wrapper
-
-    @staticmethod
-    def replay(fn: Callable):
-        """
-        Display the history of calls for a method.
-        """
-        r = redis.Redis()
-        fn_name = fn.__qualname__
-        call_count = int(r.get(fn_name))
-
-        print(f"{fn_name} was called {call_count} times:")
-
-        inputs = r.lrange(f"{fn_name}:inputs", 0, -1)
-        outputs = r.lrange(f"{fn_name}:outputs", 0, -1)
-
-        for inp, outp in zip(inputs, outputs):
-            try:
-                inp = inp.decode('utf-8')
-            except Exception:
-                inp = ''
-            try:
-                outp = outp.decode('utf-8')
-            except Exception:
-                outp = ''
-            print('{}(*{}) -> {}'.format(f_n, inp, outp))
 
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
