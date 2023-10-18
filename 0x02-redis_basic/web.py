@@ -18,7 +18,7 @@ def url_access_count(method: Callable) -> Callable:
     A decorator for the get_page function.
     """
     @wraps(method)
-    def wrapper(self, url: str) -> str:
+    def wrapper(url: str) -> str:
         """wrap decorated function"""
         key = f"cached:{url}"
         cached_value = r.get(key)
