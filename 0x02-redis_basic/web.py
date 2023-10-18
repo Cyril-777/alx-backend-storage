@@ -7,18 +7,17 @@ of a particular URL and return it
 import redis
 import requests
 from functools import wraps
-from typing import Callable
 
 
 r = redis.Redis()
 
 
-def url_access_count(method: Callable) -> Callable:
+def url_access_count(method):
     """
     A decorator for the get_page function.
     """
     @wraps(method)
-    def wrapper(url: str) -> str:
+    def wrapper(url):
         """wrap decorated function"""
         key = f"cached:{url}"
         cached_value = r.get(key)
