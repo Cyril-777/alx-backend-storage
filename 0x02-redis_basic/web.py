@@ -19,12 +19,12 @@ def url_access_count(method):
     @wraps(method)
     def wrapper(url):
         """wrap decorated function"""
-        key = f"cached:{url}"
+        key = "cached:" + url
         cached_value = r.get(key)
         if cached_value:
             return cached_value.decode("utf-8")
 
-        key_count = f"count:{url}"
+        key_count = "count:" + url
         html_content = method(url)
 
         r.incr(key_count)
