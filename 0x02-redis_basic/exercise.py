@@ -19,7 +19,7 @@ class Cache:
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
-    
+
     def get(self, key, fn=None):
         data = self._redis.get(key)
         if data is not None and fn is not None:
@@ -31,7 +31,8 @@ class Cache:
 
     def get_int(self, key):
         return self.get(key, fn=int)
-    
+
+
 def call_history(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -42,6 +43,7 @@ def call_history(method):
         self._redis.rpush(outputKey, result)
         return result
     return wrapper
+
 
 # Decoration
 Cache.store = call_history(Cache.store)
