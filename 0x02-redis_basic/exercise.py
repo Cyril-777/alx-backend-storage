@@ -7,6 +7,7 @@
 
 import redis
 import uuid
+import functools
 
 
 class Cache:
@@ -30,3 +31,17 @@ class Cache:
 
     def get_int(self, key):
         return self.get(key, fn=int)
+    
+def count_calls(fn):
+    @functools.wraps(fn)
+    def wrapper(self, *args, **kwargs):
+        key = fn.__qualname__
+        count = self._redis.get(key)
+        count = int(count) if count else 0
+        count += 1
+        self._redis.set(key, count)
+        return fn(self, *args, **kwargs)
+    return wrapper
+
+# Decoration
+Cache.store = count_calls(Cache.store)
