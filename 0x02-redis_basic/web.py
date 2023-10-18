@@ -19,6 +19,7 @@ def url_access_count(method: Callable) -> Callable:
     """
     @wraps(method)
     def wrapper(self, url: str) -> str:
+        """wrap decorated function"""
         key = f"cached:{url}"
         cached_value = r.get(key)
         if cached_value:
@@ -33,20 +34,6 @@ def url_access_count(method: Callable) -> Callable:
         return html_content
 
     return wrapper
-
-
-@url_access_count
-def get_page(self, url: str) -> str:
-    """
-    Obtain the HTML content, track the number of accesses,
-    and cache the result with a 10-second expiration.
-    """
-    results = requests.get(url)
-    return results.text
-
-
-if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
 
 
 @url_access_count
