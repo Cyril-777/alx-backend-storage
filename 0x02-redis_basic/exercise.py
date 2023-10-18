@@ -32,16 +32,19 @@ class Cache:
     def get_int(self, key):
         return self.get(key, fn=int)
     
-def count_calls(fn):
-    @functools.wraps(fn)
+def call_history(method):
+    @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
-        key = fn.__qualname__
-        count = self._redis.get(key)
-        count = int(count) if count else 0
-        count += 1
-        self._redis.set(key, count)
-        return fn(self, *args, **kwargs)
+        inputKey = "{}:inputs".format(method.__qualname__)
+        outputKey = "{}:outputs".format(method.__qualname__)
+        self._redis.rpush(inputKey, str(args))
+        result = method(self, *args, **kwargs)
+        self._redis.rpush(outputKey, result)
+        return result
     return wrapper
 
 # Decoration
-Cache.store = count_calls(Cache.store)
+Cache.store = call_history(Cache.store)
+
+if __name__ == "__main__":
+    cache = Cache()
