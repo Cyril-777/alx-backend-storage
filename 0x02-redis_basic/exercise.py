@@ -48,5 +48,21 @@ def call_history(method):
 # Decoration
 Cache.store = call_history(Cache.store)
 
+
+def replay(method):
+    inputKey = "{}:inputs".format(method.__qualname__)
+    outputKey = "{}:outputs".format(method.__qualname__)
+
+    inputs = Cache()._redis.lrange(inputKey, 0, -1)
+    outputs = Cache()._redis.lrange(outputKey, 0, -1)
+
+    print(f"{method.__qualname__} was called {len(inputs)} times:")
+
+    for input_data, output_data in zip(inputs, outputs):
+        input_str = input_data.decode("utf-8")
+        print(f"{method.__qualname__}(*{input_str}) ->
+              {output_data.decode('utf-8')}")
+
+
 if __name__ == "__main__":
     cache = Cache()
