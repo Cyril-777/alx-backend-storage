@@ -36,12 +36,10 @@ def call_history(method):
         input = str(args) + str(kwargs)
         output = str(method(*args, **kwargs))
 
-        input_history = wrapper.input_history =
-        wrapper.__dict__.get('input_history', [])
+        input_history = wrapper.input_history = wrapper.__dict__.get('input_history', [])
         input_history.append(input)
 
-        output_history = wrapper.output_history =
-        wrapper.__dict__.get('output_history', [])
+        output_history = wrapper.output_history = wrapper.__dict__.get('output_history', [])
         output_history.append(output)
 
         return output
