@@ -22,10 +22,11 @@ def count_calls(method: Callable) -> Callable:
     key = method.__qualname__
 
     @wraps(method)
-    def wrapper(self, *args, **kwargs):
-        """wrap decorated function"""
-        self._redis.incr(key)
-        return method(self, *args, **kwargs)
+    def wrapper(*args, **kwargs):
+        wrapper.calls += 1
+        return method(*args, **kwargs)
+
+    wrapper.calls = 0
     return wrapper
 
 
@@ -75,6 +76,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Store the input data in Redis and return a randomly generated key.
