@@ -93,13 +93,17 @@ class Cache:
         return self.get(key, fn=lambda x: int(x.decode('utf-8')))
 
 
-def replay(method: Callable):
+def replay(catch, method: Callable):
     """
     Display the history of calls of a particular function.
     """
     function_name = method.__qualname__
     inputKey = "{}:inputs".format(function_name)
     outputKey = "{}:outputs".format(function_name)
+
+    cache = Cache()
+    cache.store("foo")
+    cache.store("bar")
 
     inputs = cache._redis.lrange(inputKey, 0, -1)
     outputs = cache._redis.lrange(outputKey, 0, -1)
