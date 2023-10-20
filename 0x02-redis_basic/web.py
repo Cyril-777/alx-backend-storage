@@ -53,8 +53,4 @@ def get_page(url: str) -> str:
 if __name__ == "__main__":
     get_page('http://google.com')
 
-    key_count = "count:" + url
-    count = r.get(key_count).decode("utf-8")
-    print(count)
-
     print("OK")
