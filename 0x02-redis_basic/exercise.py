@@ -93,7 +93,7 @@ class Cache:
         return self.get(key, fn=lambda x: int(x.decode('utf-8')))
 
 
-def replay(cache, method: Callable):
+def replay(method: Callable):
     """
     Display the history of calls of a particular function.
     """
