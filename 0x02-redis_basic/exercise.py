@@ -47,22 +47,6 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(method: Callable):
-    """
-    Display the history of calls of a particular function.
-    """
-    function_name = method.__qualname__
-    inputKey = "{}:inputs".format(function_name)
-    outputKey = "{}:outputs".format(function_name)
-
-    inputs = cache._redis.lrange(inputKey, 0, -1)
-    outputs = cache._redis.lrange(outputKey, 0, -1)
-    print("{} was called {} times:".format(function_name, len(inputs)))
-    for inp, outp in zip(inputs, outputs):
-        print("{}(*{}) -> {}".format(function_name, inp.decode('utf-8'),
-                                     outp.decode('utf-8')))
-
-
 class Cache:
     """
     A class for caching and tracking method calls.
@@ -107,3 +91,19 @@ class Cache:
         Retrieve data from Redis and convert it to an integer.
         """
         return self.get(key, fn=lambda x: int(x.decode('utf-8')))
+
+
+def replay(cache, method: Callable):
+    """
+    Display the history of calls of a particular function.
+    """
+    function_name = method.__qualname__
+    inputKey = "{}:inputs".format(function_name)
+    outputKey = "{}:outputs".format(function_name)
+
+    inputs = cache._redis.lrange(inputKey, 0, -1)
+    outputs = cache._redis.lrange(outputKey, 0, -1)
+    print("{} was called {} times:".format(function_name, len(inputs)))
+    for inp, outp in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(function_name, inp.decode('utf-8'),
+                                     outp.decode('utf-8')))
