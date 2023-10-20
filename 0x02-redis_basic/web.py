@@ -42,8 +42,19 @@ def get_page(url: str) -> str:
     and cache the result with a 10-second expiration.
     """
     results = requests.get(url)
+
+    key_count = "count:" + url
+    count = r.get(key_count).decode("utf-8")
+    print(count)
+
     return results.text
 
 
 if __name__ == "__main__":
     get_page('http://google.com')
+
+    key_count = "count:" + url
+    count = r.get(key_count).decode("utf-8")
+    print(count)
+
+    print("OK")
